@@ -799,7 +799,7 @@ static double wrapToPm(double a_num, const double a_max)
   return a_num;
 }
 
-static double wrapToPmPi(const double a_angle_rad)
+static double wrapToPmPi(const double a_angle_rad)   //判断是否大于180度，如果大于，直接取负来让角进行旋转。
 {
   return wrapToPm(a_angle_rad, M_PI);
 }
@@ -822,7 +822,7 @@ static void odom_callback(const nav_msgs::Odometry::ConstPtr& input)
   odom_calc(input->header.stamp);
 }
 
-static void imuUpsideDown(const sensor_msgs::Imu::Ptr input)
+static void imuUpsideDown(const sensor_msgs::Imu::Ptr input)         //这个主要判断IMU朝向。并非判断，只是取IMU的朝向 矫正坐标
 {
   double input_roll, input_pitch, input_yaw;
 
@@ -858,8 +858,8 @@ static void imu_callback(const sensor_msgs::Imu::Ptr& input)
 
   double imu_roll, imu_pitch, imu_yaw;
   tf::Quaternion imu_orientation;
-  tf::quaternionMsgToTF(input->orientation, imu_orientation);
-  tf::Matrix3x3(imu_orientation).getRPY(imu_roll, imu_pitch, imu_yaw);
+  tf::quaternionMsgToTF(input->orientation, imu_orientation);  //先将四元数坐标转换。
+  tf::Matrix3x3(imu_orientation).getRPY(imu_roll, imu_pitch, imu_yaw);  //通过四元数得到欧式坐标
 
   imu_roll = wrapToPmPi(imu_roll);
   imu_pitch = wrapToPmPi(imu_pitch);
