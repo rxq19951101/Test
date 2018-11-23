@@ -862,12 +862,12 @@ static void imu_callback(const sensor_msgs::Imu::Ptr& input)
   tf::Matrix3x3(imu_orientation).getRPY(imu_roll, imu_pitch, imu_yaw);  //通过四元数得到欧式坐标
 
   imu_roll = wrapToPmPi(imu_roll);
-  imu_pitch = wrapToPmPi(imu_pitch);
+  imu_pitch = wrapToPmPi(imu_pitch);           //如果角度大于180 调成负的
   imu_yaw = wrapToPmPi(imu_yaw);
 
   static double previous_imu_roll = imu_roll, previous_imu_pitch = imu_pitch, previous_imu_yaw = imu_yaw;
   const double diff_imu_roll = calcDiffForRadian(imu_roll, previous_imu_roll);
-  const double diff_imu_pitch = calcDiffForRadian(imu_pitch, previous_imu_pitch);
+  const double diff_imu_pitch = calcDiffForRadian(imu_pitch, previous_imu_pitch); //得出这个差值，并将值调小
   const double diff_imu_yaw = calcDiffForRadian(imu_yaw, previous_imu_yaw);
 
   imu.header = input->header;
@@ -879,7 +879,7 @@ static void imu_callback(const sensor_msgs::Imu::Ptr& input)
 
   if (diff_time != 0)
   {
-    imu.angular_velocity.x = diff_imu_roll / diff_time;
+    imu.angular_velocity.x = diff_imu_roll / diff_time;        //得出叫角速度
     imu.angular_velocity.y = diff_imu_pitch / diff_time;
     imu.angular_velocity.z = diff_imu_yaw / diff_time;
   }
@@ -983,7 +983,7 @@ static void points_callback(const sensor_msgs::PointCloud2::ConstPtr& input)
     if (_use_imu == true && _use_odom == true)
       predict_pose_for_ndt = predict_pose_imu_odom;
     else if (_use_imu == true && _use_odom == false)
-      predict_pose_for_ndt = predict_pose_imu;
+      predict_pose_for_ndt = predict_pose_imu;                  //只用IMU 就是在这一行
     else if (_use_imu == false && _use_odom == true)
       predict_pose_for_ndt = predict_pose_odom;
     else
