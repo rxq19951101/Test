@@ -22,7 +22,7 @@ git pull 就会将本地与服务器端同步
 
 
 下面是github 常用的命令：
-git branch 查看本地所有分支
+git branch 查看本地所有分支\
 git status 查看当前状态
 git commit 提交
 git branch -a 查看所有的分支
